@@ -2,28 +2,103 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>전화번호 마지막 4자리 추첨</title>
+<title>전화번호 추첨 이벤트</title>
+
 <style>
-    body { text-align: center; font-size: 2rem; margin-top: 50px; }
-    #number { font-size: 3rem; letter-spacing: 10px; font-weight: bold; }
-    button { padding: 10px 20px; font-size: 1.2rem; margin-top: 20px; }
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: "Pretendard", "Noto Sans KR", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+    }
+
+    .container {
+        background: #ffffffdd;
+        backdrop-filter: blur(10px);
+        padding: 45px 50px;
+        border-radius: 20px;
+        text-align: center;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0px 15px 40px #00000030;
+        animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+        margin-bottom: 25px;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .number-box {
+        font-size: 3.4rem;
+        font-weight: 900;
+        letter-spacing: 12px;
+        margin-bottom: 30px;
+        color: #444;
+        height: 50px;
+    }
+
+    button {
+        background: #7f5af0;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.2rem;
+        padding: 15px 25px;
+        width: 100%;
+        cursor: pointer;
+        transition: 0.2s;
+        font-weight: 600;
+    }
+
+    button:hover {
+        background: #6245c6;
+    }
+
+    button:active {
+        transform: scale(0.98);
+    }
+
+    .footer {
+        margin-top: 25px;
+        font-size: 0.8rem;
+        color: #ffffffcc;
+    }
 </style>
 </head>
 <body>
 
-<h2>전화번호 마지막 4자리 추첨</h2>
-<div id="number">_ _ _ _</div>
-<button id="resetBtn">RESET</button>
+<div class="container">
+    <h2>전화번호 마지막 4자리 추첨</h2>
+
+    <div id="number" class="number-box">_ _ _ _</div>
+
+    <button id="resetBtn">🎉 새 번호 추첨</button>
+
+    <div class="footer">랜덤 추첨 시스템</div>
+</div>
 
 <script>
 document.getElementById("resetBtn").addEventListener("click", async () => {
-    document.getElementById("number").innerText = "_ _ _ _";
+    const numberBox = document.getElementById("number");
+    numberBox.innerText = "_ _ _ _";
 
     const res = await fetch("/api/draw");
     const data = await res.json();
 
     if (data.status === "done") {
-        document.getElementById("number").innerText = "모든 번호 추첨 완료";
+        numberBox.innerText = "끝!";
         return;
     }
 
@@ -33,11 +108,18 @@ document.getElementById("resetBtn").addEventListener("click", async () => {
 
     const timer = setInterval(() => {
         result += number[index];
-        document.getElementById("number").innerText =
+
+        numberBox.innerText =
             result.padEnd(4, "_").split("").join(" ");
+
+        numberBox.style.transform = "scale(1.2)";
+        setTimeout(() => {
+            numberBox.style.transform = "scale(1)";
+        }, 150);
+
         index++;
         if (index >= 4) clearInterval(timer);
-    }, 1000);
+    }, 450);  // 속도 빠르게(0.45초)
 });
 </script>
 
