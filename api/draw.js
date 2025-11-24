@@ -1,11 +1,9 @@
-// api/draw.js
 import fs from "fs";
 import path from "path";
 
 export default function handler(req, res) {
     const filePath = path.join(process.cwd(), "usedNumbers.json");
 
-    // usedNumbers.json 없으면 생성
     if (!fs.existsSync(filePath)) {
         fs.writeFileSync(filePath, JSON.stringify([]));
     }
@@ -21,7 +19,7 @@ export default function handler(req, res) {
         num = Math.floor(Math.random() * 10000);
     } while (used.includes(num));
 
-    used.push(num);
+    used.push(num.toString().padStart(4, "0"));
     fs.writeFileSync(filePath, JSON.stringify(used));
 
     res.status(200).json({

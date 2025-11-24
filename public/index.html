@@ -77,7 +77,6 @@ button:active { transform: scale(0.98); }
 </div>
 
 <script>
-// fetch로 서버 API 호출
 async function getNumber() {
     try {
         const response = await fetch("/api/draw");
@@ -90,7 +89,6 @@ async function getNumber() {
     }
 }
 
-// 추첨 시작
 document.getElementById("startBtn").addEventListener("click", async () => {
     const numberBox = document.getElementById("number");
     numberBox.innerText = "_ _ _ _";
@@ -121,13 +119,6 @@ document.getElementById("startBtn").addEventListener("click", async () => {
     }, 600);
 });
 
-// RESET 버튼
 document.getElementById("resetBtn").addEventListener("click", () => {
     const numberBox = document.getElementById("number");
     numberBox.innerText = "_ _ _ _";
-    numberBox.classList.remove("glow");
-});
-</script>
-
-</body>
-</html>
