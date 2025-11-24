@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>전화번호 마지막 4자리 추첨</title>
+<style>
+    body { text-align: center; font-size: 2rem; margin-top: 50px; }
+    #number { font-size: 3rem; letter-spacing: 10px; font-weight: bold; }
+    button { padding: 10px 20px; font-size: 1.2rem; margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<h2>전화번호 마지막 4자리 추첨</h2>
+<div id="number">_ _ _ _</div>
+<button id="resetBtn">RESET</button>
+
+<script>
+document.getElementById("resetBtn").addEventListener("click", async () => {
+    document.getElementById("number").innerText = "_ _ _ _";
+
+    const res = await fetch("/api/draw");
+    const data = await res.json();
+
+    if (data.status === "done") {
+        document.getElementById("number").innerText = "모든 번호 추첨 완료";
+        return;
+    }
+
+    const number = data.number;
+    let index = 0;
+    let result = "";
+
+    const timer = setInterval(() => {
+        result += number[index];
+        document.getElementById("number").innerText =
+            result.padEnd(4, "_").split("").join(" ");
+        index++;
+        if (index >= 4) clearInterval(timer);
+    }, 1000);
+});
+</script>
+
+</body>
+</html>
