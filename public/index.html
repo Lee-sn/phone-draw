@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>전화번호 추첨 이벤트</title>
-
 <style>
     body {
         margin: 0;
@@ -25,12 +24,6 @@
         width: 90%;
         max-width: 400px;
         box-shadow: 0px 15px 40px #00000030;
-        animation: fadeIn 0.6s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
     }
 
     h2 {
@@ -47,6 +40,7 @@
         margin-bottom: 30px;
         color: #444;
         height: 50px;
+        transition: all 0.2s ease-in-out;
     }
 
     button {
@@ -56,25 +50,20 @@
         border-radius: 10px;
         font-size: 1.2rem;
         padding: 15px 25px;
-        width: 100%;
+        width: 45%;
         cursor: pointer;
         transition: 0.2s;
         font-weight: 600;
+        margin: 5px;
     }
 
-    button:hover {
-        background: #6245c6;
+    button:hover { background: #6245c6; }
+    button:active { transform: scale(0.98); }
+
+    .glow {
+        text-shadow: 0 0 8px #7f5af0, 0 0 12px #a18cd1;
     }
 
-    button:active {
-        transform: scale(0.98);
-    }
-
-    .footer {
-        margin-top: 25px;
-        font-size: 0.8rem;
-        color: #ffffffcc;
-    }
 </style>
 </head>
 <body>
@@ -84,42 +73,58 @@
 
     <div id="number" class="number-box">_ _ _ _</div>
 
-    <button id="resetBtn">🎉 새 번호 추첨</button>
-
-    <div class="footer">랜덤 추첨 시스템</div>
+    <div>
+        <button id="startBtn">▶ 추첨 시작</button>
+        <button id="resetBtn">🔄 RESET</button>
+    </div>
 </div>
 
 <script>
-document.getElementById("resetBtn").addEventListener("click", async () => {
+let currentNumber = "";
+
+document.getElementById("startBtn").addEventListener("click", async () => {
     const numberBox = document.getElementById("number");
     numberBox.innerText = "_ _ _ _";
+    numberBox.classList.remove("glow");
 
+    // 서버에서 새 번호 요청
     const res = await fetch("/api/draw");
     const data = await res.json();
 
     if (data.status === "done") {
-        numberBox.innerText = "끝!";
+        numberBox.innerText = "모든 번호 추첨 완료";
         return;
     }
 
-    const number = data.number;
+    currentNumber = data.number;
     let index = 0;
     let result = "";
 
+    // 첫 자리부터 한 자리씩 등장
     const timer = setInterval(() => {
-        result += number[index];
+        result += currentNumber[index];
+        numberBox.innerText = result.padEnd(4, "_").split("").join(" ");
 
-        numberBox.innerText =
-            result.padEnd(4, "_").split("").join(" ");
-
+        // 숫자 강조 효과
         numberBox.style.transform = "scale(1.2)";
+        numberBox.classList.add("glow");
         setTimeout(() => {
             numberBox.style.transform = "scale(1)";
-        }, 150);
+            numberBox.classList.remove("glow");
+        }, 300);
 
         index++;
         if (index >= 4) clearInterval(timer);
-    }, 450);  // 속도 빠르게(0.45초)
+    }, 600);
+});
+
+document.getElementById("resetBtn").addEventListener("click", async () => {
+    const numberBox = document.getElementById("number");
+    numberBox.innerText = "_ _ _ _";
+    numberBox.classList.remove("glow");
+
+    // 서버에서 초기화 API가 있다면 호출 가능
+    // 예: await fetch("/api/reset");
 });
 </script>
 
